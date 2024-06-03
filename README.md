@@ -15,7 +15,7 @@ dotnet restore
 ```sh
 dotnet build
 ```
-3.3. **Uruchom aplikację:**
+3.3 **Uruchom aplikację:**
 ```sh
 dotnet run
 ```
