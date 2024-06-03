@@ -1,13 +1,25 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using biblioteka.Models.DBEntities;
 
 namespace biblioteka.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class BooksDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public BooksDbContext(DbContextOptions<BooksDbContext> options)
             : base(options)
         {
         }
+
+        public DbSet<Books> Books { get; set; }
+    }
+
+    public class ReservationsDbContext : DbContext
+    {
+        public ReservationsDbContext(DbContextOptions<ReservationsDbContext> options)
+            : base(options)
+        {
+        }
+
+        public DbSet<Reservations> Reservations { get; set; }
     }
 }

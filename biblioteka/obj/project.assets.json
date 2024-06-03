@@ -4548,24 +4548,25 @@
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 8.0.6",
       "Microsoft.AspNetCore.Identity.UI >= 8.0.5",
       "Microsoft.EntityFrameworkCore >= 8.0.6",
+      "Microsoft.EntityFrameworkCore.Design >= 8.0.6",
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.6",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.6"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Patryk Pawlicki\\.nuget\\packages\\": {}
+    "C:\\Users\\dawid.skrzypacz\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\WSB\\semestr 5\\projekt-programowanie\\WSB-PROG\\biblioteka\\biblioteka\\biblioteka.csproj",
+      "projectUniqueName": "C:\\Users\\dawid.skrzypacz\\WSB-PROG\\biblioteka\\biblioteka.csproj",
       "projectName": "biblioteka",
-      "projectPath": "E:\\WSB\\semestr 5\\projekt-programowanie\\WSB-PROG\\biblioteka\\biblioteka\\biblioteka.csproj",
-      "packagesPath": "C:\\Users\\Patryk Pawlicki\\.nuget\\packages\\",
-      "outputPath": "E:\\WSB\\semestr 5\\projekt-programowanie\\WSB-PROG\\biblioteka\\biblioteka\\obj\\",
+      "projectPath": "C:\\Users\\dawid.skrzypacz\\WSB-PROG\\biblioteka\\biblioteka.csproj",
+      "packagesPath": "C:\\Users\\dawid.skrzypacz\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\dawid.skrzypacz\\WSB-PROG\\biblioteka\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Patryk Pawlicki\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\dawid.skrzypacz\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -4573,7 +4574,6 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -4610,6 +4610,12 @@
             "version": "[8.0.5, )"
           },
           "Microsoft.EntityFrameworkCore": {
+            "target": "Package",
+            "version": "[8.0.6, )"
+          },
+          "Microsoft.EntityFrameworkCore.Design": {
+            "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+            "suppressParent": "All",
             "target": "Package",
             "version": "[8.0.6, )"
           },
