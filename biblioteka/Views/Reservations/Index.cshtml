@@ -1,0 +1,76 @@
+﻿@model IEnumerable<biblioteka.Models.DBEntities.Books>
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Books List";
+}
+
+<h2>Books List</h2>
+
+<form method="get" asp-action="Index">
+    <div class="form-group">
+        <label for="publishedYear">Filter by Published Year:</label>
+        <select name="publishedYear" id="publishedYear" class="form-control">
+            <option value="">All</option>
+            @foreach (var year in (SelectList)ViewBag.Years)
+            {
+                <option value="@year.Value">@year.Text</option>
+            }
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<table class="table mt-3">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().ISBN)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().PublishedYear)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().AvailableCopies)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ISBN)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PublishedYear)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AvailableCopies)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.BookID">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.BookID">Details</a> |
+                    <form asp-action="Delete" asp-route-id="@item.BookID" method="post" style="display:inline">
+                        <input type="submit" value="Delete" class="btn btn-link" onclick="return confirm('Are you sure you want to delete this book?');" />
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create" class="btn btn-primary">Create New</a>
