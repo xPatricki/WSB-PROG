@@ -6,23 +6,31 @@
 
 <h2>Books List</h2>
 
-<table class="table">
+<form method="get" asp-action="Index">
+    <div class="form-group">
+        <label for="publishedYear">Filter by Published Year:</label>
+        <input type="number" name="publishedYear" id="publishedYear" class="form-control" placeholder="Enter year" />
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+</form>
+
+<table class="table mt-3">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(model => model.First().Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Author)
+                @Html.DisplayNameFor(model => model.First().Author)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.ISBN)
+                @Html.DisplayNameFor(model => model.First().ISBN)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PublishedYear)
+                @Html.DisplayNameFor(model => model.First().PublishedYear)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AvailableCopies)
+                @Html.DisplayNameFor(model => model.First().AvailableCopies)
             </th>
             <th></th>
         </tr>

@@ -1,6 +1,7 @@
 using biblioteka.Data;
 using biblioteka.Models.DBEntities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Linq;
 
@@ -16,10 +17,24 @@ namespace biblioteka.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(int? publishedYear)
         {
-            var books = _context.Books.ToList();
-            return View(books);
+            var books = _context.Books.AsQueryable();
+            var years = _context.Books
+                                .Select(b => b.PublishedYear)
+                                .Distinct()
+                                .OrderBy(y => y)
+                                .ToList();
+
+            if (publishedYear.HasValue)
+            {
+                books = books.Where(b => b.PublishedYear == publishedYear.Value);
+            }
+
+            ViewBag.Years = new SelectList(years);
+
+            return View(books.ToList());
+
         }
 
         [HttpGet]
