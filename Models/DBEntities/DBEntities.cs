@@ -7,6 +7,7 @@ namespace biblioteka.Models.DBEntities
     public class Books
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int BookID { get; set; }
 
         [Required]
