@@ -36,4 +36,11 @@ namespace biblioteka.Models.DBEntities
         public DateTime ReservationDate { get; set; }
         public DateTime DueDate { get; set; }
     }
+    public class PagerOptions
+    {
+        public int CurrentPage { get; set; }
+        public int PageSize { get; set; }
+        public int TotalItems { get; set; }
+        public int PageCount => (int)Math.Ceiling((double)TotalItems / PageSize);
+    }
 }

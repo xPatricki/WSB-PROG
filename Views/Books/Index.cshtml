@@ -1,8 +1,8 @@
 ﻿@model IEnumerable<biblioteka.Models.DBEntities.Books>
-@using Microsoft.AspNetCore.Mvc.Rendering
+@using biblioteka.ViewModels;
 
 @{
-    ViewData["Title"] = "Books List";
+    var pager = (PagerViewModel)ViewData["Pager"];
 }
 
 <h2>Books List</h2>
@@ -25,24 +25,16 @@
     <button type="submit" class="btn btn-primary">Filter</button>
 </form>
 
+@Html.Partial("_PageSizeForm", pager)
+
 <table class="table mt-3">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Author)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().ISBN)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().PublishedYear)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().AvailableCopies)
-            </th>
+            <th>@Html.DisplayNameFor(model => model.First().Title)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Author)</th>
+            <th>@Html.DisplayNameFor(model => model.First().ISBN)</th>
+            <th>@Html.DisplayNameFor(model => model.First().PublishedYear)</th>
+            <th>@Html.DisplayNameFor(model => model.First().AvailableCopies)</th>
             <th></th>
         </tr>
     </thead>
@@ -50,21 +42,11 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Author)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ISBN)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PublishedYear)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AvailableCopies)
-                </td>
+                <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Author)</td>
+                <td>@Html.DisplayFor(modelItem => item.ISBN)</td>
+                <td>@Html.DisplayFor(modelItem => item.PublishedYear)</td>
+                <td>@Html.DisplayFor(modelItem => item.AvailableCopies)</td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.BookID">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.BookID">Details</a> |
@@ -78,3 +60,5 @@
 </table>
 
 <a asp-action="Create" class="btn btn-primary">Create New</a>
+
+@Html.Partial("_Pager", pager)
