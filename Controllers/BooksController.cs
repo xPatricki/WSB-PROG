@@ -1,5 +1,6 @@
 using biblioteka.Data;
 using biblioteka.Models.DBEntities;
+using biblioteka.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
@@ -16,14 +17,9 @@ namespace biblioteka.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(int? publishedYear, string bookTitle, string authorName)
+        public IActionResult Index(int? publishedYear, string bookTitle, string authorName, int page = 1, int pageSize = 10)
         {
             var books = _context.Books.AsQueryable();
-            var years = _context.Books
-                                .Select(b => b.PublishedYear)
-                                .Distinct()
-                                .OrderBy(y => y)
-                                .ToList();
 
             if (publishedYear.HasValue)
             {
@@ -38,10 +34,23 @@ namespace biblioteka.Controllers
                 books = books.Where(b => b.Author.Contains(authorName));
             }
 
-            ViewBag.AuthorName = authorName; // Preserve the input value
-            ViewBag.BookTitle = bookTitle; // Preserve the input value
+            var totalItems = books.Count();
+            var pagerOptions = new PagerOptions
+            {
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalItems = totalItems
+            };
 
-            return View(books.ToList());
+            var paginatedBooks = books.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            var pagerViewModel = new PagerViewModel(page, pageSize, totalItems, new[] { 5, 10, 20 });
+
+            ViewData["Pager"] = pagerViewModel;
+            ViewBag.AuthorName = authorName;
+            ViewBag.BookTitle = bookTitle;
+
+            return View(paginatedBooks);
         }
 
         // other actions remain the same...
