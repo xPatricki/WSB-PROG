@@ -18,7 +18,9 @@ namespace biblioteka.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(int? publishedYear, string bookTitle, string authorName, int page = 1, int pageSize = 10)
+
+        public IActionResult Index(int? publishedYear, string bookTitle, string authorName, int page = 1, int pageSize = 10)
+
         {
             var books = _context.Books.AsQueryable();
 
@@ -35,7 +37,9 @@ namespace biblioteka.Controllers
                 books = books.Where(b => b.Author.Contains(authorName));
             }
 
-            var totalItems = await books.CountAsync();
+
+            var totalItems = books.Count();
+
             var pagerOptions = new PagerOptions
             {
                 CurrentPage = page,
@@ -43,7 +47,9 @@ namespace biblioteka.Controllers
                 TotalItems = totalItems
             };
 
-            var paginatedBooks = await books.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            var paginatedBooks = books.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
 
             var pagerViewModel = new PagerViewModel(page, pageSize, totalItems, new[] { 5, 10, 20 });
 
@@ -143,6 +149,7 @@ namespace biblioteka.Controllers
                 return NotFound();
             }
             return View(book);
+
         }
 
         [HttpPost, ActionName("Delete")]
