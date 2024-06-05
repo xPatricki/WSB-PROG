@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Book Details";
+    var successMessage = TempData["successMessage"]?.ToString();
+    var errorMessage = TempData["errorMessage"]?.ToString();
 }
 
 <h2>Book Details</h2>
@@ -41,12 +43,6 @@
             @Html.DisplayFor(model => model.AvailableCopies)
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.BookID" class="btn btn-primary">Edit</a>
-    <form asp-action="DeleteConfirmed" asp-route-id="@Model.BookID" method="post" style="display:inline">
-        <input type="submit" value="Delete" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this book?');" />
-    </form>
 </div>
 <div>
     <a asp-action="Index">Back to List</a>

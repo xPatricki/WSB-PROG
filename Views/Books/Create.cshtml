@@ -1,16 +1,33 @@
 ﻿@model biblioteka.Models.DBEntities.Books
 
 @{
-    ViewData["Title"] = "Create Book";
+    ViewData["Title"] = "Books Module - Create";
+    var errorMessage = TempData["errorMessage"]?.ToString();
 }
+
+<h1>@ViewData["Title"]</h1>
+<hr />
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger">
+        <strong>Error! </strong>@errorMessage
+        <button type="button" class="btn-close float-end" data-bs-dismiss="alert"></button>
+    </div>
+}
+
 
 <h2>Create Book</h2>
 
 <h4>Book</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" method="post">
+
+<form action="Create" method="post">
+            <div class="form-group">
+            <label asp-for="BookID" class="control-label"></label>
+        <input asp-for="BookID" class="form-control" />
+        <span asp-validation-for="BookID" class="text-danger"></span>
+             </div>
             <div class="form-group">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
@@ -36,12 +53,16 @@
                 <input asp-for="AvailableCopies" class="form-control" />
                 <span asp-validation-for="AvailableCopies" class="text-danger"></span>
             </div>
+    <div class="form-group">
+        <label asp-for="Reservations" class="control-label"></label>
+        <input asp-for="Reservations" class="form-control" />
+        <span asp-validation-for="Reservations" class="text-danger"></span>
+    </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
-    </div>
-</div>
+
 
 <div>
     <a asp-action="Index">Back to List</a>
