@@ -1,132 +1,159 @@
 using biblioteka.Data;
 using biblioteka.Models.DBEntities;
+using biblioteka.ViewModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;  // Add this using directive
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace biblioteka.Controllers
 {
+    // [Authorize(Roles = "Admin")]
     public class ReservationsController : Controller
     {
         private readonly ReservationsDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly BooksDbContext _booksContext;
 
-        public ReservationsController(ReservationsDbContext context)
+        public ReservationsController(ReservationsDbContext context, UserManager<IdentityUser> userManager, BooksDbContext booksContext)
         {
             _context = context;
+            _userManager = userManager;
+            _booksContext = booksContext;
         }
 
-        [HttpGet]
         public IActionResult Index()
         {
-            var reservations = _context.Reservations.ToList();
+            var reservations = _context.Reservations
+                .Include(r => r.User)
+                .Include(r => r.Book)
+                .ToList();
             return View(reservations);
         }
 
         [HttpGet]
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Create()
         {
-            var reservation = _context.Reservations.Find(id);
-            if (reservation == null)
+            var users = await _userManager.Users.ToListAsync();
+            var books = await _booksContext.Books.ToListAsync();
+
+            var model = new ReservationViewModel
             {
-                TempData["errorMessage"] = "Reservation not found.";
-                return RedirectToAction("Index");
-            }
-            return View(reservation);
+                Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList(),
+                Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList()
+            };
+
+            return View(model);
         }
+
+[HttpPost]
+public async Task<IActionResult> Create(ReservationViewModel model)
+{
+    if (!ModelState.IsValid)
+    {
+        // Log the validation errors
+        foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+        {
+            Console.WriteLine(error.ErrorMessage);
+        }
+
+        var users = await _userManager.Users.ToListAsync();
+        var books = await _booksContext.Books.ToListAsync();
+
+        model.Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList();
+        model.Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList();
+
+        return View(model);
+    }
+
+    try
+    {
+        var reservation = new Reservations
+        {
+            UserID = model.UserID,
+            BookID = model.BookID,
+            ReservationDate = model.ReservationDate,
+            DueDate = model.DueDate
+        };
+
+        _context.Reservations.Add(reservation);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+    catch (Exception ex)
+    {
+        // Log the exception
+        Console.WriteLine(ex.Message);
+        ModelState.AddModelError(string.Empty, "An error occurred while saving the reservation.");
+        
+        var users = await _userManager.Users.ToListAsync();
+        var books = await _booksContext.Books.ToListAsync();
+
+        model.Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList();
+        model.Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList();
+
+        return View(model);
+    }
+}
+
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Edit(int id)
         {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Create(Reservations reservation)
-        {
-            try
-            {
-                if (ModelState.IsValid)
-                {
-                    _context.Reservations.Add(reservation);
-                    _context.SaveChanges();
-
-                    TempData["successMessage"] = "Reservation created successfully.";
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    TempData["errorMessage"] = "Model data is not valid.";
-                    return View(reservation);
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = ex.Message;
-                return View(reservation);
-            }
-        }
-
-        [HttpGet]
-        public IActionResult Edit(int id)
-        {
-            var reservation = _context.Reservations.Find(id);
+            var reservation = await _context.Reservations.FindAsync(id);
             if (reservation == null)
             {
-                TempData["errorMessage"] = "Reservation not found.";
-                return RedirectToAction("Index");
+                return NotFound();
             }
-            return View(reservation);
+
+            var users = await _userManager.Users.ToListAsync();
+            var books = await _booksContext.Books.ToListAsync();
+
+            var model = new ReservationViewModel
+            {
+                ReservationID = reservation.ReservationID,
+                UserID = reservation.UserID,
+                BookID = reservation.BookID,
+                ReservationDate = reservation.ReservationDate,
+                DueDate = reservation.DueDate,
+                Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList(),
+                Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList()
+            };
+
+            return View(model);
         }
 
         [HttpPost]
-        public IActionResult Edit(Reservations reservation)
+        public async Task<IActionResult> Edit(ReservationViewModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    _context.Reservations.Update(reservation);
-                    _context.SaveChanges();
-
-                    TempData["successMessage"] = "Reservation updated successfully.";
-                    return RedirectToAction("Index");
-                }
-                else
-                {
-                    TempData["errorMessage"] = "Model data is not valid.";
-                    return View(reservation);
-                }
-            }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = ex.Message;
-                return View(reservation);
-            }
-        }
-
-        [HttpPost]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            try
-            {
-                var reservation = _context.Reservations.Find(id);
+                var reservation = await _context.Reservations.FindAsync(model.ReservationID);
                 if (reservation == null)
                 {
-                    TempData["errorMessage"] = "Reservation not found.";
-                    return RedirectToAction("Index");
+                    return NotFound();
                 }
 
-                _context.Reservations.Remove(reservation);
-                _context.SaveChanges();
+                reservation.UserID = model.UserID;
+                reservation.BookID = model.BookID;
+                reservation.ReservationDate = model.ReservationDate;
+                reservation.DueDate = model.DueDate;
 
-                TempData["successMessage"] = "Reservation deleted successfully.";
-                return RedirectToAction("Index");
+                _context.Reservations.Update(reservation);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex)
-            {
-                TempData["errorMessage"] = ex.Message;
-                return RedirectToAction("Index");
-            }
+
+            var users = await _userManager.Users.ToListAsync();
+            var books = await _booksContext.Books.ToListAsync();
+
+            model.Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList();
+            model.Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList();
+
+            return View(model);
         }
     }
 }
