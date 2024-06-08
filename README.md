@@ -20,6 +20,14 @@ dotnet build
 dotnet run
 ```
 
+Konto admina
+admin@admin.pl
+P@ssw0rd1233
+
+Konto użytkownika
+test@test.pl
+P@ssw0rd1233
+
 Jeśli wszystkie kroki zostały wykonanie poprawnie powinien odpalić nam się projekt w przeglądarce internetowej pod adresem:
 **http://localhost:5009**
 
