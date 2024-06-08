@@ -20,4 +20,7 @@ dotnet build
 dotnet run
 ```
 
-Jeśli wszystkie kroki zostały wykonanie poprawnie powinien odpalić nam się projekt w domyślnej przeglądarce internetowej
+Jeśli wszystkie kroki zostały wykonanie poprawnie powinien odpalić nam się projekt w przeglądarce internetowej pod adresem:
+**http://localhost:5009**
+
+
