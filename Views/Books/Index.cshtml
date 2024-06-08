@@ -61,7 +61,9 @@
         }
     </tbody>
 </table>
-
+@if (User.Identity.Name == "admin@admin.pl")
+{
 <a asp-action="Create" class="btn btn-primary">Create New</a>
+}
 
 @Html.Partial("_Pager", pager)
