@@ -22,6 +22,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.First().DueDate)
             </th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -35,6 +36,10 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DueDate)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ReservationID" class="btn btn-warning">Edit</a>
+                @* <a asp-action="Delete" asp-route-id="@item.ReservationID" class="btn btn-danger">Delete</a> *@
             </td>
         </tr>
     }
