@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using biblioteka.Models;
 using biblioteka.Models.DBEntities;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace biblioteka.Models
 {
@@ -19,17 +21,26 @@ namespace biblioteka.Models
         public int AvailableCopies { get; set; }
         public ICollection<Reservations> Reservations { get; set; }
     }
-    public class ReservationsViewModel
-    {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
-        public int ReservationID { get; set; }
-        public string UserID { get; set; }
-        public IdentityUser User { get; set; }
-        public int BookID { get; set; }
-        public Books Book { get; set; }
-        public DateTime ReservationDate { get; set; }
-        public DateTime DueDate { get; set; }
-    }
+public class ReservationsViewModel
+{
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int ReservationID { get; set; }
+    
+    [Required]
+    public string UserID { get; set; }
+
+    [Required]
+    public int BookID { get; set; }
+
+    [Required]
+    [DataType(DataType.Date)]
+    public DateTime ReservationDate { get; set; }
+
+    [Required]
+    [DataType(DataType.Date)]
+    public DateTime DueDate { get; set; }
+}
+
 }

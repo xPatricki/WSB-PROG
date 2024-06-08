@@ -14,9 +14,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.First().User.UserName)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.First().Book.Title)
             </th>
             <th>
@@ -25,14 +22,12 @@
             <th>
                 @Html.DisplayNameFor(model => model.First().DueDate)
             </th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
     @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.User.UserName)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Book.Title)
             </td>
@@ -41,6 +36,10 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DueDate)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ReservationID" class="btn btn-warning">Edit</a>
+                @* <a asp-action="Delete" asp-route-id="@item.ReservationID" class="btn btn-danger">Delete</a> *@
             </td>
         </tr>
     }
