@@ -1,0 +1,47 @@
+﻿@model IEnumerable<biblioteka.Models.DBEntities.Reservations>
+
+@{
+    ViewData["Title"] = "Reservations";
+}
+
+<h1>Reservations</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Create New Reservation</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Book.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().ReservationDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().DueDate)
+            </th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Book.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReservationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DueDate)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ReservationID" class="btn btn-warning">Edit</a>
+                @* <a asp-action="Delete" asp-route-id="@item.ReservationID" class="btn btn-danger">Delete</a> *@
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
