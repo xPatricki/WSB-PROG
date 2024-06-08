@@ -1,6 +1,6 @@
 using biblioteka.Data;
 using biblioteka.Models.DBEntities;
-using biblioteka.ViewModels;
+using biblioteka.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -25,36 +25,61 @@ namespace biblioteka.Controllers
             _booksContext = booksContext;
         }
 
-        public IActionResult Index()
-        {
-            var reservations = _context.Reservations
-                .Include(r => r.User)
-                .Include(r => r.Book)
-                .ToList();
-            return View(reservations);
-        }
+public async Task<IActionResult> Index()
+{
+    // Pobieranie aktualnie zalogowanego użytkownika
+    var currentUser = await _userManager.GetUserAsync(User);
+    if (currentUser == null)
+    {
+        return Challenge(); // Przekierowanie do logowania, jeśli użytkownik nie jest zalogowany.
+    }
 
-        [HttpGet]
-        public async Task<IActionResult> Create()
-        {
-            var users = await _userManager.Users.ToListAsync();
-            var books = await _booksContext.Books.ToListAsync();
+    // Pobieranie rezerwacji tylko dla zalogowanego użytkownika
+    var reservations = await _context.Reservations
+        .Where(r => r.UserID == currentUser.Id)
+        .Include(r => r.Book) // Zakładając, że chcesz włączyć szczegóły książki
+        .ToListAsync();
 
-            var model = new ReservationViewModel
-            {
-                Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList(),
-                Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList()
-            };
+    return View(reservations);
+}
 
-            return View(model);
-        }
+[HttpGet]
+public async Task<IActionResult> Create()
+{
+    // Pobieranie aktualnie zalogowanego użytkownika
+    var currentUser = await _userManager.GetUserAsync(User);
+    if (currentUser == null)
+    {
+        return Challenge(); // Przekierowanie do logowania, jeśli użytkownik nie jest zalogowany.
+    }
+
+    // Pobieranie listy użytkowników
+    ViewBag.Users = await _userManager.Users.Select(u => new SelectListItem 
+    { 
+        Value = u.Id, 
+        Text = u.UserName 
+    }).ToListAsync();
+
+    // Pobieranie listy książek
+    ViewBag.Books = await _booksContext.Books.Select(b => new SelectListItem 
+    { 
+        Value = b.BookID.ToString(), 
+        Text = b.Title 
+    }).ToListAsync();
+
+    // Przekazanie ID aktualnie zalogowanego użytkownika do ViewBag
+    ViewBag.CurrentUserID = currentUser.Id;
+
+    return View();
+}
+
 
 [HttpPost]
-public async Task<IActionResult> Create(ReservationViewModel model)
+public async Task<IActionResult> Create(ReservationsViewModel model)
 {
+    Console.WriteLine($"-----CREATE-------: {model.BookID}, {model.UserID}");
     if (!ModelState.IsValid)
     {
-        // Log the validation errors
         foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
         {
             Console.WriteLine(error.ErrorMessage);
@@ -63,8 +88,8 @@ public async Task<IActionResult> Create(ReservationViewModel model)
         var users = await _userManager.Users.ToListAsync();
         var books = await _booksContext.Books.ToListAsync();
 
-        model.Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList();
-        model.Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList();
+        // model.Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList();
+        // model.Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList();
 
         return View(model);
     }
@@ -85,19 +110,19 @@ public async Task<IActionResult> Create(ReservationViewModel model)
     }
     catch (Exception ex)
     {
-        // Log the exception
         Console.WriteLine(ex.Message);
         ModelState.AddModelError(string.Empty, "An error occurred while saving the reservation.");
-        
+
         var users = await _userManager.Users.ToListAsync();
         var books = await _booksContext.Books.ToListAsync();
 
-        model.Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList();
-        model.Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList();
+        // model.Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList();
+        // model.Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList();
 
         return View(model);
     }
 }
+
 
 
         [HttpGet]
@@ -112,22 +137,22 @@ public async Task<IActionResult> Create(ReservationViewModel model)
             var users = await _userManager.Users.ToListAsync();
             var books = await _booksContext.Books.ToListAsync();
 
-            var model = new ReservationViewModel
+            var model = new ReservationsViewModel
             {
                 ReservationID = reservation.ReservationID,
                 UserID = reservation.UserID,
                 BookID = reservation.BookID,
                 ReservationDate = reservation.ReservationDate,
                 DueDate = reservation.DueDate,
-                Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList(),
-                Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList()
+                // Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList(),
+                // Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList()
             };
 
             return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(ReservationViewModel model)
+        public async Task<IActionResult> Edit(ReservationsViewModel model)
         {
             if (ModelState.IsValid)
             {
@@ -150,8 +175,8 @@ public async Task<IActionResult> Create(ReservationViewModel model)
             var users = await _userManager.Users.ToListAsync();
             var books = await _booksContext.Books.ToListAsync();
 
-            model.Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList();
-            model.Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList();
+            // model.Users = users.Select(u => new SelectListItem { Value = u.Id, Text = u.UserName }).ToList();
+            // model.Books = books.Select(b => new SelectListItem { Value = b.BookID.ToString(), Text = b.Title }).ToList();
 
             return View(model);
         }
